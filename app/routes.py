@@ -2,7 +2,7 @@ import os
 import secrets
 
 from dotenv import load_dotenv
-from flask import Blueprint, redirect, session
+from flask import Blueprint, redirect, session, render_template
 
 load_dotenv()
 
@@ -13,7 +13,7 @@ main = Blueprint("main", __name__)
 
 @main.route("/")
 def index():
-    return "Hello, World!"
+    return render_template("index.html")
 
 
 @main.route("/authorize")

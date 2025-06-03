@@ -2,7 +2,7 @@ import os
 import secrets
 
 from dotenv import load_dotenv
-from flask import Blueprint, redirect, session, render_template
+from flask import Blueprint, abort, redirect, request, session, render_template
 
 load_dotenv()
 
@@ -43,3 +43,32 @@ def authorize():
     # Redirect the user to the authorization URL
     # This is where the user will be asked to grant or deny access.
     return redirect(authorization_url)
+
+
+@main.route("/callback")
+def callback():
+    """
+    Handles the callback from the authorization server.
+    This is where the user is redirected after granting or rejecting the access.
+    """
+
+    # Retrieve the state and code from the query parameters
+    # and validate the state from the session.
+    if "state" not in session:
+        abort(400, "State not found in session!")
+
+    state = session.pop("state")
+    received_state = request.args.get("state")
+
+    # Validate the state
+    if state != received_state:
+        abort(400, "State mismatch. Possible CSRF attack!")
+
+    code = request.args.get("code")
+    error = request.args.get("error")
+    if error:
+        msg = request.args.get("error_description", "An error occurred during authorization.")
+        abort(400, f"Authorization error: {msg}")
+
+    # TODO: Process the authorization code (i.e., exchange it for an access token)
+    return f"Authorization successful! Code: {code}"

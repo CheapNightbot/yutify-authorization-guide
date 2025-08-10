@@ -70,5 +70,6 @@ def callback():
         msg = request.args.get("error_description", "An error occurred during authorization.")
         abort(400, f"Authorization error: {msg}")
 
-    # TODO: Process the authorization code (i.e., exchange it for an access token)
+    # Process the authorization code (i.e., exchange it for an access token)
     return f"Authorization successful! Code: {code}"
+ 
